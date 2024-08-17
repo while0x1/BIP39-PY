@@ -17,18 +17,22 @@ state = input()
 
 #Generate New Phrase
 if state == '1':
-    print('Enter Option:')
-    print(' 1 - 12 Words')
-    print(' 2 - 24 Words')
-    seedlen = input()    
+    '''
+    !!needs further testing
+    #print('Enter Option:')
+    #print(' 1 - 12 Words')
+    #print(' 2 - 24 Words')
+    #seedlen = input()    
     
-    if seedlen == '1':
-        entropy = random.SystemRandom().randbytes(16)
-    elif seedlen == '2':
-        entropy = random.SystemRandom().randbytes(32)
-    else:
-        print('invalid option')
-        sys.exit()
+    #if seedlen == '1':
+    #    entropy = random.SystemRandom().randbytes(16)
+    #elif seedlen == '2':
+    #    entropy = random.SystemRandom().randbytes(32)
+    #else:
+    #    print('invalid option')
+    #    sys.exit()
+    '''
+    entropy = random.SystemRandom().randbytes(16)
     checksum = hashlib.sha256(entropy).digest()
     seedbytes_hex = entropy.hex() + checksum.hex()[0]
     seedbits = bin(int(seedbytes_hex , base=16))[2:]
