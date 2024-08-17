@@ -4,6 +4,7 @@ import hashlib
 import sys
 from pycardano import HDWallet, PaymentVerificationKey, Network, Address
 
+
 with open('bip39_words.txt','r') as f:
     wordList = f.read().splitlines()
 
@@ -17,25 +18,29 @@ state = input()
 
 #Generate New Phrase
 if state == '1':
-    '''
-    !!needs further testing
-    #print('Enter Option:')
-    #print(' 1 - 12 Words')
-    #print(' 2 - 24 Words')
-    #seedlen = input()    
+    print('Enter Option:')
+    print(' 1 - 12 Words')
+    print(' 2 - 24 Words')
+    seedlen = input()    
     
-    #if seedlen == '1':
-    #    entropy = random.SystemRandom().randbytes(16)
-    #elif seedlen == '2':
-    #    entropy = random.SystemRandom().randbytes(32)
-    #else:
-    #    print('invalid option')
-    #    sys.exit()
-    '''
-    entropy = random.SystemRandom().randbytes(16)
-    checksum = hashlib.sha256(entropy).digest()
-    seedbytes_hex = entropy.hex() + checksum.hex()[0]
-    seedbits = bin(int(seedbytes_hex , base=16))[2:]
+    if seedlen == '1':
+        entropy = random.SystemRandom().randbytes(16)
+        checksum = hashlib.sha256(entropy).digest()
+        #seedbytes_hex = entropy.hex() + checksum.hex()[0]
+        seedbits_e = bin(int(entropy.hex() , base=16))[2:].zfill(128)
+        seedbits_c = bin(int(checksum.hex()[0] , base=16))[2:].zfill(4)
+    elif seedlen == '2':
+        entropy = random.SystemRandom().randbytes(32)
+        checksum = hashlib.sha256(entropy).digest()
+        #seedbytes_hex = entropy.hex() + checksum.hex()[:2]
+        seedbits_e = bin(int(entropy.hex() , base=16))[2:].zfill(256)
+        seedbits_c = bin(int(checksum.hex()[:2] , base=16))[2:].zfill(8)
+    else:
+        print('invalid option')
+        sys.exit()
+
+    seedbits = seedbits_e + seedbits_c
+    print(len(seedbits))
     bitlist = list(map(''.join, zip(*[iter(seedbits)]*11)))
     seedphrase = []
     seednumbers = []
@@ -44,7 +49,7 @@ if state == '1':
         num = int(bits, 2)
         seedphrase.append(wordList[num])
         seednumbers.append(str(num))
-        
+           
     print(f'Generated seedphrase - {" ".join(seedphrase)}')
     print('')
     print(f'Seed numbers {" ".join(seednumbers)}')
